@@ -18,17 +18,11 @@ fn main() {
 }
 
 fn calculate(length: u32, width: u32, height: u32) -> u32 {
-    let side_1 = length * width;
-    let side_2 = width * height;
-    let side_3 = length * height;
+    let mut dimensions = [length, width, height];
+    dimensions.sort();
 
-    let mut smallest = side_1;
+    let wrap = (dimensions[0] * 2) + (dimensions[1] * 2);
+    let bow = dimensions.iter().fold(1, |acc, size| acc * size);
 
-    for side in vec![side_2, side_3] {
-        if side < smallest {
-            smallest = side;
-        }
-    }
-
-    (side_1 * 2) + (side_2 * 2) + (side_3 * 2) + smallest
+    wrap + bow
 }
