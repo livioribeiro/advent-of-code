@@ -6,4 +6,4 @@ Usage
 cargo run --bin day{n}
 ```
 
-where `{n}`` is the number of the day.
+where `{n}` is the number of the day.
