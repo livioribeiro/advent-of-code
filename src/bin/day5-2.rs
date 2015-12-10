@@ -20,8 +20,10 @@ fn two_letters_twice(line: &str) -> bool {
 
     let mut i = 0;
     for (c1, c2) in chars.iter().zip(chars2.iter()) {
+        // start inner loop two position ahead of outer loop
         let j = i + 2;
 
+        // break if out of bounds
         if j > size - 1 {
             break;
         }
