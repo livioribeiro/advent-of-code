@@ -111,13 +111,13 @@ impl Circuit {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 enum Node {
     Reference(String),
     Value(u16),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 enum Gate {
     And(Node, Node),
     Or(Node, Node),
