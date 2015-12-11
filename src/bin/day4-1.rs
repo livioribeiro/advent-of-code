@@ -1,21 +1,29 @@
-extern crate md5;
-extern crate rustc_serialize;
+// Optimized using https://gist.github.com/gkbrk/2e4835e3a17b3fb6e1e7
 
-use rustc_serialize::hex::ToHex;
+extern crate crypto;
+
+use crypto::md5::Md5;
+use crypto::digest::Digest;
 
 fn main() {
-    let input = "iwrupvqb";
+    let input = "iwrupvqb".as_bytes();
 
-    for i in 0..u32::max_value() {
-        let input = format!("{}{}", input, i);
-        let digest = md5::compute(input.as_bytes());
-        let digest = digest.to_hex();
+    let mut hasher = Md5::new();
 
-        let first_five: Vec<char> = digest.chars().take(5).collect();
+    for i in 0..std::u64::MAX {
+        hasher.input(input);
+        hasher.input(i.to_string().as_bytes());
 
-        if first_five == ['0', '0', '0', '0', '0'] {
+        let mut output = [0; 16];
+        hasher.result(&mut output);
+
+        let first_five = (output[0] as i32)  + (output[1] as i32) + ((output[2] >> 4) as i32);
+
+        if first_five == 0 {
             println!("{}", i);
             break;
         }
+
+        hasher.reset();
     }
 }
