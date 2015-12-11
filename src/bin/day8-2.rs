@@ -6,6 +6,12 @@ fn main() {
     // let input = r#""\x27""#;
     // let input = r#""\\""#;
 
+
+
+    println!("{}", calculate(input) - input.len());
+}
+
+fn calculate(input: &str) -> usize {
     let mut escape_next = false;
     let mut total = 0;
 
@@ -28,5 +34,35 @@ fn main() {
         total += 1;
     }
 
-    println!("{}", total - input.len());
+    total
+}
+
+#[cfg(test)]
+mod tests {
+    use super::calculate;
+
+    #[test]
+    fn test_1() {
+        assert_eq!(6, calculate(r#""""#));
+    }
+
+    #[test]
+    fn test_2() {
+        assert_eq!(9, calculate(r#""abc""#));
+    }
+
+    #[test]
+    fn test_3() {
+        assert_eq!(16, calculate(r#""aaa\"aaa""#));
+    }
+
+    #[test]
+    fn test_4() {
+        assert_eq!(11, calculate(r#""\x27""#));
+    }
+
+    #[test]
+    fn test_5() {
+        assert_eq!(10, calculate(r#""\\""#));
+    }
 }
