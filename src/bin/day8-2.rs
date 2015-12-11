@@ -1,12 +1,5 @@
 fn main() {
     let input = include_str!("day8.txt");
-    // let input = r#""""#;
-    // let input = r#""abc""#;
-    // let input = r#""aaa\"aaa""#;
-    // let input = r#""\x27""#;
-    // let input = r#""\\""#;
-
-
 
     println!("{}", calculate(input) - input.len());
 }
