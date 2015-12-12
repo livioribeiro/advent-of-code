@@ -19,7 +19,7 @@ fn calculate(input: &str) -> i32 {
             buff.push(c);
         } else if reading_number {
             reading_number = false;
-            total += buff.parse().expect("Could no parse value");
+            total += buff.parse().expect("Could not parse value");
             buff.clear();
         }
     }
