@@ -1,3 +1,34 @@
+// // short solution
+// extern crate serde;
+// extern crate serde_json;
+//
+// use serde_json::Value;
+//
+// fn main() {
+//     let input = include_str!("day12.txt");
+//
+//     let json: Value = serde_json::from_str(input).unwrap();
+//
+//     println!("{}", calculate(&json));
+// }
+//
+// fn calculate(value: &Value) -> i64 {
+//     let forbidden = Value::String("red".to_owned());
+//
+//     match value {
+//         &Value::I64(val) => val,
+//         &Value::U64(val) => val as i64,
+//         &Value::Array(ref arr) => arr.iter().fold(0, |acc, val| acc + calculate(val)),
+//         &Value::Object(ref obj) => {
+//             if obj.values().any(|val| val == &forbidden) {
+//                 return 0
+//             }
+//             obj.values().fold(0, |acc, val| acc + calculate(val))
+//         }
+//         _ => 0
+//     }
+// }
+
 use std::str::Chars;
 
 const NUMERICAL: [char; 11] = ['-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
