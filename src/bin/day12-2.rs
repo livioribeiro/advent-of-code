@@ -150,6 +150,6 @@ mod tests {
 
     #[test]
     fn test_red_3() {
-        assert_eq!(0, calculate(r#"[1,"red",5]"#));
+        assert_eq!(6, calculate(r#"[1,"red",5]"#));
     }
 }
