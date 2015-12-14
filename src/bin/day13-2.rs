@@ -21,7 +21,6 @@ fn parse(input: &str) -> (Vec<String>, HashMap<String, i32>) {
 
     for line in input.lines() {
         let cap = re.captures(line).expect(&format!("Invalid input: {}", line));
-        debug_assert!(cap.len() == 5, "Invalid input: {}", line);
 
         let factor = match cap.at(2).unwrap() {
             "gain" => 1,
