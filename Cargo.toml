@@ -6,3 +6,4 @@ license = "MIT"
 
 [dependencies]
 rust-crypto = "0.2"
+regex = "0.1"
