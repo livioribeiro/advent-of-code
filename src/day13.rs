@@ -1,86 +1,51 @@
-extern crate regex;
-
 use std::cmp;
 use std::collections::HashMap;
+use regex::Regex;
 
-fn main() {
-    let input = include_str!("day13.txt");
+const INPUT: &'static str = include_str!("data/day13.txt");
 
-    let result = calculate(input);
-
-    println!("{}", result);
+pub fn part1() -> i32 {
+    calculate_part1(INPUT)
 }
 
-// fn calculate(input: &str) -> i32 {
-//     let (group, happiness) = parse(input);
-//
-//     let mut total = std::i32::MIN;
-//     for i in 0..group.len() {
-//         let prev = {
-//             if i == 0 {
-//                 group.last().unwrap()
-//             } else {
-//                 group.get(i - 1).unwrap()
-//             }
-//         };
-//
-//         let current = group.get(i).unwrap();
-//
-//         let result = calculate_recursive(current, prev, current, &group, &happiness);
-//         println!("{}", result);
-//         total = cmp::max(total, result);
-//     }
-//
-//     total
-// }
+pub fn part2() -> i32 {
+    calculate_part2(INPUT)
+}
 
-// fn calculate_recursive(first: &str,
-//                        prev: &str,
-//                        current: &str,
-//                        group: &Vec<String>,
-//                        happiness: &HashMap<String, i32>) -> i32
-// {
-//     let pos = group.iter().position(|p| p == current).unwrap();
-//
-//     let mut group = group.clone();
-//     group.remove(pos);
-//
-//     if group.len() == 1 {
-//         let ref next = group[0];
-//         let next_id = format!("{}{}", current, next);
-//         let prev_id = format!("{}{}", current, prev);
-//
-//         let gain = happiness[&prev_id] + happiness[&next_id];
-//
-//         let next_id = format!("{}{}", next, first);
-//         let prev_id = format!("{}{}", next, current);
-//
-//         return gain + happiness[&prev_id] + happiness[&next_id];
-//     }
-//
-//     let mut gain = std::i32::MIN;
-//     let mut next = String::new();
-//
-//     for person in group.iter() {
-//         let next_id = format!("{}{}", current, person);
-//         let prev_id = format!("{}{}", current, prev);
-//
-//         let current_gain = happiness[&prev_id] + happiness[&next_id];
-//
-//         if current_gain > gain {
-//             gain = current_gain;
-//             next = person.to_owned();
-//         }
-//     }
-//
-//     gain + calculate_recursive(first, current, &next, &group, happiness)
-// }
+fn calculate_part1(input: &str) -> i32 {
+    let (group, happiness) = parse(input);
+
+    let mut result = ::std::i32::MIN;
+    for group in permutations(&group) {
+        result = cmp::max(result, calculate_happiness(&group, &happiness));
+    }
+
+    result
+}
+
+fn calculate_part2(input: &str) -> i32 {
+    let (mut group, mut happiness) = parse(input);
+
+    for person in group.iter() {
+        happiness.insert(format!("{}MySelf", person), 0);
+        happiness.insert(format!("MySelf{}", person), 0);
+    }
+
+    group.push("MySelf".to_owned());
+
+    let mut result = ::std::i32::MIN;
+    for group in permutations(&group) {
+        result = cmp::max(result, calculate_happiness(&group, &happiness));
+    }
+
+    result
+}
 
 fn parse(input: &str) -> (Vec<String>, HashMap<String, i32>) {
     let mut group: Vec<String> = Vec::new();
     let mut happiness: HashMap<String, i32> = HashMap::new();
 
-    let re = regex::Regex::new(
+    let re = Regex::new(
         r#"(\w+?) would (gain|lose) (\d{1,2}) happiness units by sitting next to (\w+?)\."#
     ).expect("Invalid regex");
 
@@ -139,17 +104,6 @@ fn calculate_happiness(group: &Vec<String>, happiness: &HashMap<String, i32>) ->
     }
 
     total
-}
-
-fn calculate(input: &str) -> i32 {
-    let (group, happiness) = parse(input);
-
-    let mut result = std::i32::MIN;
-    for group in permutations(&group) {
-        result = cmp::max(result, calculate_happiness(&group, &happiness));
-    }
-
-    result
 }
 
 fn permutations<T>(input: &Vec<T>) -> Vec<Vec<T>>
@@ -214,7 +168,7 @@ mod tests {
     }
 
     #[test]
-    fn calculate() {
+    fn part1_calculate() {
         let input = "Alice would gain 54 happiness units by sitting next to Bob.\n\
                      Alice would lose 79 happiness units by sitting next to Carol.\n\
                      Alice would lose 2 happiness units by sitting next to David.\n\
@@ -228,7 +182,7 @@ mod tests {
                      David would lose 7 happiness units by sitting next to Bob.\n\
                      David would gain 41 happiness units by sitting next to Carol.";
 
-        let result = super::calculate(input);
+        let result = super::calculate_part1(input);
         assert_eq!(330, result);
     }
 }

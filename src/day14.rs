@@ -1,14 +1,56 @@
-extern crate regex;
-
 use std::cmp;
 use regex::Regex;
 
-fn main() {
-    let input = include_str!("day14.txt");
+const INPUT: &'static str = include_str!("data/day14.txt");
+const RACE_TIME: u32 = 2503;
 
-    let raindeers = parse(input);
-    let winner = race(&raindeers, 2503);
-    println!("{}", winner.distance_at(2503));
+pub fn part1() -> u32 {
+    calculate_part1(&parse(INPUT), RACE_TIME)
+}
+
+pub fn part2() -> u32 {
+    calculate_part2(&parse(INPUT), RACE_TIME)
+}
+
+fn calculate_part1(raindeers: &Vec<Raindeer>, seconds: u32) -> u32 {
+    let mut win_distance = 0;
+
+    for raindeer in raindeers {
+        let distance = raindeer.distance_at(seconds);
+        win_distance = cmp::max(distance, win_distance);
+    }
+
+    win_distance
+}
+
+fn calculate_part2(raindeers: &Vec<Raindeer>, seconds: u32) -> u32 {
+    let score = race_part2(raindeers, seconds);
+
+    *score.iter().max().unwrap()
+}
+
+fn race_part2(raindeers: &Vec<Raindeer>, seconds: u32) -> Vec<u32> {
+    let mut win_distance = 0;
+    let mut distances: Vec<u32> = vec![0; raindeers.len()];
+    let mut score: Vec<u32>  = vec![0; raindeers.len()];
+
+    for s in 1..(seconds + 1) { // range last bound is exclusive
+        // we don't know yet who has the lead
+        for (i, raindeer) in raindeers.iter().enumerate() {
+            let distance = raindeer.distance_at(s);
+            distances[i] = distance;
+            win_distance = cmp::max(win_distance, distance);
+        }
+
+        // now we know who has the lead
+        for (i, d) in distances.iter().enumerate() {
+            if *d == win_distance {
+                score[i] += 1;
+            }
+        }
+    }
+
+    score
 }
 
 fn parse(input: &str) -> Vec<Raindeer> {
@@ -32,23 +74,8 @@ fn parse(input: &str) -> Vec<Raindeer> {
     raindeers
 }
 
-fn race(raindeers: &Vec<Raindeer>, seconds: u32) -> &Raindeer {
-    let mut winner = raindeers.first().unwrap();
-    let mut win_distance = winner.distance_at(seconds);
-
-    for raindeer in raindeers {
-        let distance = raindeer.distance_at(seconds);
-        if distance > win_distance {
-            win_distance = distance;
-            winner = raindeer;
-        }
-    }
-
-    winner
-}
-
 struct Raindeer {
-    _name: String,
+    pub name: String,
     speed: u32,
     fly_time: u32,
     rest_time: u32,
@@ -57,7 +84,7 @@ struct Raindeer {
 impl Raindeer {
     pub fn new(name: &str, speed: u32, fly_time: u32, rest_time: u32) -> Self {
         Raindeer {
-            _name: name.to_owned(),
+            name: name.to_owned(),
             speed: speed,
             fly_time: fly_time,
             rest_time: rest_time,
@@ -87,5 +114,16 @@ mod tests {
     fn dancer_at_1000_seconds() {
         let comet = Raindeer::new("Dancer", 16, 11, 162);
         assert_eq!(1056, comet.distance_at(1000));
+    }
+
+    #[test]
+    fn comet_or_dancer() {
+        let racers = vec![Raindeer::new("Comet", 14, 10, 127),
+                          Raindeer::new("Dancer", 16, 11, 162)];
+
+        let points = super::race_part2(&racers, 1000);
+
+        assert_eq!(312, points[0]);
+        assert_eq!(689, points[1]);
     }
 }

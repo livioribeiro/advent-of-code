@@ -1,4 +1,6 @@
-#[path="../day10.rs"]
+extern crate regex;
+
+#[path="../day14.rs"]
 mod lib;
 
 fn main() {

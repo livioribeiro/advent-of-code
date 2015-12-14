@@ -1,4 +1,6 @@
-#[path="../day10.rs"]
+extern crate crypto;
+
+#[path="../day4.rs"]
 mod lib;
 
 fn main() {

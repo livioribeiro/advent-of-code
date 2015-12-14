@@ -1,4 +1,5 @@
-use std::io::{Cursor, Read};
+const INPUT_PART1: &'static [u8; 8] = b"vzbxkghb";
+const INPUT_PART2: &'static [u8; 8] = b"vzbxxzaa";
 
 const A: u8 = 'a' as u8;
 const Z: u8 = 'z' as u8;
@@ -10,38 +11,31 @@ const O: u8 = 'o' as u8;
 
 const FORBIDDEN: [u8; 3] = [I, L, O];
 
-fn main() {
-    let input = "vzbxkghb";
-    // Uncomment for part 2
-    // let input = "vzbxxyzz";
+pub fn part1() -> String {
+    calculate(INPUT_PART1)
+}
 
-    let mut pass: [u8; 8] = {
-        let mut cur = Cursor::new(input);
-        let mut buff = [0; 8];
-        cur.read(&mut buff).expect("Could not read &'static str from Cursor");
+pub fn part2() -> String {
+    calculate(INPUT_PART2)
+}
 
-        buff
-    };
+fn calculate(input: &[u8; 8]) -> String {
+    let mut input = input.to_owned();
 
-    // Uncomment for part 2
-    // increment(&mut pass);
-
-    while !is_valid(&pass) {
-        if !check_forbidden_chars(&pass) {
-            increment_forbidden_char(&mut pass);
+    while !is_valid(&input) {
+        if !check_forbidden_chars(&input) {
+            increment_forbidden_char(&mut input);
             continue
         }
 
-        increment(&mut pass);
+        increment(&mut input);
 
-        if pass == [A, A, A, A, A, A, A, A] {
+        if input == [A, A, A, A, A, A, A, A] {
             panic!("No valid password found");
         }
     }
 
-    let pass = String::from_utf8(Vec::from(pass.as_ref())).expect("Could not convert to utf-8");
-
-    println!("{}", pass);
+    String::from_utf8(Vec::from(input.as_ref())).expect("Could not convert from utf-8")
 }
 
 fn is_valid(pass: &[u8; 8]) -> bool {

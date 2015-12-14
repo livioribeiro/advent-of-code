@@ -3,7 +3,7 @@ Solutions to [Advent of Code](http://http://adventofcode.com) in [Rust](http://r
 Usage
 
 ```sh
-cargo run --bin day{n}-{m}
+cargo run --bin day{n}
 ```
 
-where `{n}` is the number of the day and `{m}` is the part.
+where `{n}` is the number of the day.
