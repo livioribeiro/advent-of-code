@@ -80,20 +80,16 @@ mod tests {
                      \n\
                      HOH";
 
-        let (replacements, _) = super::parse(input);
-        println!("{:?}", replacements);
+        let (replacements, molecule) = super::parse(input);
+
         assert_eq!(3, replacements.len());
+        assert_eq!("HOH", molecule);
     }
 
     #[test]
     fn part1_test1() {
-        let input = "H => HO\n\
-                     H => OH\n\
-                     O => HH\n\
-                     \n\
-                     HOH";
-
-        let (replacements, molecule) = super::parse(input);
+        let molecule = "HOH";
+        let replacements = vec![("H", "HO"), ("H",  "OH"), ("O", "HH")];
         let mut variations: HashSet<String> = HashSet::new();
 
         for (target, replacement) in replacements.into_iter() {
@@ -101,5 +97,18 @@ mod tests {
         }
 
         assert_eq!(4, variations.len());
+    }
+
+    #[test]
+    fn part1_test2() {
+        let molecule = "HOHOHO";
+        let replacements = vec![("H", "HO"), ("H",  "OH"), ("O", "HH")];
+        let mut variations: HashSet<String> = HashSet::new();
+
+        for (target, replacement) in replacements.into_iter() {
+            super::replace(molecule, target, replacement, &mut variations);
+        }
+
+        assert_eq!(7, variations.len());
     }
 }
