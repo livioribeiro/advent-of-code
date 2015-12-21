@@ -1,3 +1,5 @@
+extern crate regex;
+
 #[path="../day19.rs"]
 mod lib;
 

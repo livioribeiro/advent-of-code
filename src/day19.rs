@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::collections::HashSet;
 
 const INPUT: &'static str = include_str!("data/day19.txt");
@@ -21,8 +22,33 @@ fn calculate_part1(input: &str) -> usize {
     variations.len()
 }
 
-fn calculate_part2(_: &str) -> usize {
-    0
+fn calculate_part2(input: &str) -> usize {
+    let (mut replacements, molecule) = parse(input);
+    let mut steps = 0;
+
+    let mut molecule = String::from(molecule);
+    replacements.sort_by(|&(t1, r1), &(t2, r2)| {
+        if !t1.contains("e") && t2.contains("e") {
+            Ordering::Less
+        } else if t1.contains("e") && !t2.contains("e") {
+            Ordering::Greater
+        } else {
+            r1.cmp(r2).reverse()
+        }
+    });
+
+
+    while molecule != "e" {
+        for (target, replacement) in replacements.clone().into_iter() {
+            if molecule.contains(replacement) {
+                steps += molecule.split(replacement).count() - 1;
+                molecule = molecule.replace(replacement, target);
+                break
+            }
+        }
+    }
+
+    steps
 }
 
 fn parse(input: &str) -> (Vec<(&str, &str)>, &str) {
@@ -89,7 +115,7 @@ mod tests {
     #[test]
     fn part1_test1() {
         let molecule = "HOH";
-        let replacements = vec![("H", "HO"), ("H",  "OH"), ("O", "HH")];
+        let replacements = vec![("H", "HO"), ("H", "OH"), ("O", "HH")];
         let mut variations: HashSet<String> = HashSet::new();
 
         for (target, replacement) in replacements.into_iter() {
@@ -102,7 +128,7 @@ mod tests {
     #[test]
     fn part1_test2() {
         let molecule = "HOHOHO";
-        let replacements = vec![("H", "HO"), ("H",  "OH"), ("O", "HH")];
+        let replacements = vec![("H", "HO"), ("H", "OH"), ("O", "HH")];
         let mut variations: HashSet<String> = HashSet::new();
 
         for (target, replacement) in replacements.into_iter() {
@@ -110,5 +136,35 @@ mod tests {
         }
 
         assert_eq!(7, variations.len());
+    }
+
+    #[test]
+    fn part2_test1() {
+        let input = "e => H\n\
+                     e => O\n\
+                     H => HO\n\
+                     H => OH\n\
+                     O => HH\n\
+                     \n\
+                     HOH";
+
+        let steps = super::calculate_part2(input);
+
+        assert_eq!(3, steps);
+    }
+
+    #[test]
+    fn part2_test2() {
+        let input = "e => H\n\
+                     e => O\n\
+                     H => HO\n\
+                     H => OH\n\
+                     O => HH\n\
+                     \n\
+                     HOHOHO";
+
+        let steps = super::calculate_part2(input);
+
+        assert_eq!(6, steps);
     }
 }
